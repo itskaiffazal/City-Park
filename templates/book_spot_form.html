@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Book Parking Spot - City Park{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Book Parking Spot</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6>{{ lot.prime_location_name }}</h6>
+                    <p class="text-muted">{{ lot.address }}</p>
+                    <p><strong>Rate:</strong> ₹{{ lot.price_per_hour }}/hour</p>
+                </div>
+                
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="vehicle_number" class="form-label">Vehicle Registration Number:</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="vehicle_number" 
+                               name="vehicle_number" 
+                               placeholder="e.g., MH12AB1234"
+                               required>
+                        <small class="text-muted">Enter your vehicle's registration number</small>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Confirm Booking</button>
+                        <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

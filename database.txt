@@ -1,0 +1,23 @@
+from models import db, User
+import os
+
+def init_database(app):
+    """Initialize database and create tables"""
+    with app.app_context():
+        # Create all tables
+        db.create_all()
+        
+        # Create admin user if not exists
+        admin = User.query.filter_by(username='admin').first()
+        if not admin:
+            admin = User(
+                username='admin', 
+                email='admin@citypark.com',
+                full_name='System Administrator',
+                password='admin123',
+                is_admin=True,
+                age=30
+            )
+            db.session.add(admin)
+            db.session.commit()
+            print("Admin user created: username=admin, password=admin123")

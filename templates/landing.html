@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Park - Vehicle Parking App</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-image: 
+                linear-gradient(rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)),
+                url('{{ url_for('static', filename='images/preview.webp') }}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo .city {
+            color: #6366f1;
+        }
+
+        .logo .park {
+            color: white;
+        }
+
+        .navigation {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-item {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .nav-item.active {
+            color: #fbbf24;
+            border-bottom: 2px solid #fbbf24;
+        }
+
+        .login-btn {
+            background-color: #fbbf24;
+            color: #1a1a2e;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .login-btn:hover {
+            background-color: #f59e0b;
+            color: #1a1a2e;
+        }
+
+        .main-content {
+            padding: 120px 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .welcome-text {
+            font-size: 28px;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .title {
+            font-size: 72px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+
+        .title .city {
+            color: #6366f1;
+        }
+
+        .title .park {
+            color: white;
+            border-bottom: 4px solid white;
+            padding-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            opacity: 0.8;
+            margin-bottom: 40px;
+        }
+
+        .login-section {
+            margin-top: 30px;
+        }
+
+        .footer {
+            margin-top: auto;
+            padding: 40px 50px;
+            background: rgba(0, 0, 0, 0.3);
+            text-align: center;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .navigation {
+                gap: 15px;
+            }
+
+            .main-content {
+                padding: 60px 20px;
+            }
+
+            .title {
+                font-size: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <span class="city">City</span><span class="park">PARK</span>
+        </div>
+        <nav class="navigation">
+            <a href="{{ url_for('landing') }}" class="nav-item active">Home</a>
+            <a href="{{ url_for('register') }}" class="nav-item">Register</a>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="welcome-text">Welcome to</div>
+        
+        <h1 class="title">
+            <span class="city">City</span> <span class="park">PARK</span>
+        </h1>
+        
+        <p class="subtitle">Instant Parking, Anytime, Anywhere</p>
+        
+        <div class="login-section">
+            <a href="{{ url_for('login') }}" class="login-btn">Login</a>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 CityPark. All rights reserved | IIT MADRAS (MAD-1 Project)</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

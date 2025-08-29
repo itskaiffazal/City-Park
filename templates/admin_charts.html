@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Summary Charts - Admin | City Park{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>📊 Parking Summary</h2>
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+
+<!-- Charts Row -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0 text-center">Occupied vs. Unoccupied</h5>
+            </div>
+            <div class="card-body text-center">
+                <canvas id="occupancyChart" width="100" height="50"></canvas>
+                <div class="mt-3">
+                    <small class="text-muted">
+                        <strong>Occupied:</strong> {{ occupied_spots }} | 
+                        <strong>Unoccupied:</strong> {{ total_spots - occupied_spots }} | 
+                        <strong>Total Spots:</strong> {{ total_spots }}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0 text-center">Total Revenue (₹)</h5>
+            </div>
+            <div class="card-body text-center">
+                <canvas id="revenueChart" width="100" height="50"></canvas>
+                <div class="mt-3">
+                    {% set total_revenue = 0 %}
+                    {% for lot in lots %}
+                        {% set total_revenue = total_revenue + (lot.maximum_number_of_spots * lot.price_per_hour) %}
+                    {% endfor %}
+                    <small class="text-muted">
+                        <strong>Max Revenue Potential:</strong> ₹{{ total_revenue }}/hour
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js Script -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<script>
+// 1. Occupied vs Unoccupied Chart (Clean Pie Chart)
+const occupancyCtx = document.getElementById('occupancyChart').getContext('2d');
+new Chart(occupancyCtx, {
+    type: 'pie',
+    data: {
+        labels: ['Occupied', 'Unoccupied'],
+        datasets: [{
+            data: [{{ occupied_spots }}, {{ total_spots - occupied_spots }}],
+            backgroundColor: ['#007bff', '#ffc107'],
+            borderWidth: 3,
+            borderColor: '#ffffff'
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    padding: 20,
+                    usePointStyle: true
+                }
+            }
+        }
+    }
+});
+
+// 2. Total Revenue Chart (Bar Chart)
+const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+{% set total_revenue = 0 %}
+{% for lot in lots %}
+    {% set total_revenue = total_revenue + (lot.maximum_number_of_spots * lot.price_per_hour) %}
+{% endfor %}
+
+new Chart(revenueCtx, {
+    type: 'bar',
+    data: {
+        labels: ['Revenue'],
+        datasets: [{
+            label: '₹{{ total_revenue }}',
+            data: [{{ total_revenue }}],
+            backgroundColor: ['#28a745'],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return '₹' + value;
+                    }
+                }
+            },
+            x: {
+                display: false
+            }
+        },
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return 'Max Revenue: ₹' + context.parsed.y + '/hour';
+                    }
+                }
+            }
+        }
+    }
+});
+</script>
+
+<style>
+.card {
+    border: 1px solid #e3e6f0;
+    border-radius: 8px;
+}
+
+.card-header {
+    border-bottom: 1px solid #e3e6f0;
+    font-weight: 600;
+}
+
+.shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+</style>
+{% endblock %}

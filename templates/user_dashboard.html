@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}User Dashboard - City Park{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Welcome, {{ session.username }}!</h2>
+    <a href="{{ url_for('user_history') }}" class="btn btn-outline-primary">View History</a>
+</div>
+
+<!-- Current Reservation -->
+{% if active_reservation %}
+    <div class="alert alert-success mb-4">
+        <h5>🚗 Active Reservation</h5>
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Location:</strong> {{ active_reservation.parking_spot.parking_lot.prime_location_name }}</p>
+                <p><strong>Spot Number:</strong> {{ active_reservation.parking_spot.spot_number }}</p>
+                <p><strong>Vehicle:</strong> {{ active_reservation.vehicle_number }}</p>
+                <p><strong>Parked Since:</strong> {{ active_reservation.parking_timestamp.strftime('%Y-%m-%d %H:%M') }}</p>
+            </div>
+            <div class="col-md-6 text-end">
+                <p><strong>Rate:</strong> ₹{{ active_reservation.parking_spot.parking_lot.price_per_hour }}/hour</p>
+                <a href="{{ url_for('release_spot', reservation_id=active_reservation.id) }}" 
+                   class="btn btn-warning"
+                   onclick="return confirm('Are you sure you want to release this parking spot?')">
+                   Release Spot
+                </a>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<!-- Available Parking Lots -->
+<div class="card">
+    <div class="card-header">
+        <h5>Available Parking Lots</h5>
+    </div>
+    <div class="card-body">
+        {% if lots %}
+            <div class="row">
+                {% for lot in lots %}
+                    {% set available_count = lot.parking_spots|selectattr('status', 'equalto', 'A')|list|length %}
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">{{ lot.prime_location_name }}</h6>
+                                <p class="card-text text-muted">{{ lot.address }}</p>
+                                <p class="card-text">
+                                    <strong>Available Spots:</strong> 
+                                    {% if available_count > 0 %}
+                                        <span class="badge bg-success">{{ available_count }}</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Full</span>
+                                    {% endif %}
+                                </p>
+                                <p class="card-text">
+                                    <strong>Rate:</strong> ₹{{ lot.price_per_hour }}/hour
+                                </p>
+                                
+                                {% if available_count > 0 and not active_reservation %}
+                                    <a href="{{ url_for('book_spot', lot_id=lot.id) }}" 
+                                       class="btn btn-primary">
+                                       Book Spot
+                                    </a>
+                                {% elif active_reservation %}
+                                    <button class="btn btn-secondary" disabled>
+                                        Already Have Active Reservation
+                                    </button>
+                                {% else %}
+                                    <button class="btn btn-danger" disabled>
+                                        No Available Spots
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center text-muted">
+                <p>No parking lots available at the moment.</p>
+                <p>Please check back later.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
